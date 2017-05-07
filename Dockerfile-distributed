@@ -7,10 +7,18 @@ ENV DEBIAN_FRONTEND noninteractive
 # ref: https://launchpad.net/ubuntu/+archivemirrors
 ENV UBUNTU_APT_SITE bouyguestelecom.ubuntu.lafibre.info
 
+ENV REDISTOGO_URL redis://redis-server:6379
+ENV MONGOHQ_URL mongodb://mongodb-server:27017/jsonresume
+ENV POSTMARK_API_KEY 1234567889
+
+RUN echo "REDIS : "$REDISTOGO_URL
+RUN echo "MONGO : "$MONGOHQ_URL
+RUN echo "POSTMARK_API_KEY"$POSTMARK_API_KEY
+
 # Disable src package source
 RUN sed -i 's/^deb-src\ /\#deb-src\ /g' /etc/apt/sources.list
 
-# Replace origin apt pacakge site with the mirror site
+# Replace origin apt package site with the mirror site
 RUN sed -E -i "s/([a-z]+.)?archive.ubuntu.com/$UBUNTU_APT_SITE/g" /etc/apt/sources.list
 RUN sed -i "s/security.ubuntu.com/$UBUNTU_APT_SITE/g" /etc/apt/sources.list
 
@@ -18,9 +26,7 @@ RUN apt update         && \
     apt upgrade -y     && \
     apt install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
         locales               \
-        mongodb-server        \
         mongodb-clients       \
-        redis-server          \
         coreutils             \
         util-linux            \
         bsdutils              \
@@ -47,19 +53,17 @@ RUN locale-gen en_US.UTF-8
 COPY . /registry-server
 WORKDIR /registry-server
 
+#RUN mongo mongodb-server:27017/jsonresume --eval 'db.resumes.insert({})'
+
 RUN git submodule update --init --recursive --depth 1
-RUN service mongodb start && mongo 127.0.0.1:27017/jsonresume --eval "db.resumes.insert({})"
 RUN curl -o- https://cdn.rawgit.com/creationix/nvm/v0.33.2/install.sh | bash && \
     bash -c 'source $HOME/.nvm/nvm.sh && \
     nvm install 4 && \
     nvm cache clear && \
     npm install --prefix "/registry-server"'
 
-ENV POSTMARK_API_KEY 1234567889
-ENV MONGOHQ_URL mongodb://127.0.0.1:27017/jsonresume
-
 EXPOSE 3000 5000
 
 ENTRYPOINT /bin/bash
 
-CMD ['node','server.js']
+#CMD ['node','server.js']

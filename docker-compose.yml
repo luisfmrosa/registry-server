@@ -1,0 +1,30 @@
+version: '3.6'
+services:
+  mongodb-server:
+    image: mongo
+    container_name: mongodb-server
+    hostname: mongodb-server
+    ports:
+      - '27017:27017'
+  redis-server:
+    image: 'redis:alpine'
+    container_name: redis-server
+    hostname: redis-server
+    ports:
+      - '6379:6379'
+  registry-server:
+    container_name: registry-server-dist
+    depends_on:
+      - mongodb-server
+      - redis-server
+    links:
+      - mongodb-server
+      - redis-server
+    ports:
+      - '3000:3000'
+      - '5000:5000'
+    build: .
+    environment:
+      - 'REDISTOGO_URL=redis://redis-server:6379'
+      - 'MONGOHQ_URL=mongodb://mongodb-server:27017/jsonresume'
+      - POSTMARK_API_KEY=1234567889
