@@ -24,6 +24,47 @@ Requirements: Vagrant, VirtualBox(or other providers)
 1. `vagrant ssh`
 1. `POSTMARK_API_KEY=1234567889 MONGOHQ_URL=mongodb://127.0.0.1:27017/jsonresume node server.js`
 
+### Install & run with docker-compose
+
+Docker-compose allows isolation of each component of the solution: mongodb, redis, theme-manager and registry-server.
+
+### Limitations
+
+For now, registry-server is not starting automatically. I should be started manually after its dependencies (mongodb and redis) are up.
+
+Theme-manager is not yet included in docker-compose.
+
+#### Pre-requisites
+
+It is assumed that registry-server are installed in separate folders, side-by-side.
+
+#### Install procedure
+
+1. run the following commands:
+
+    cd ~/proj/registry-server
+    sudo docker-compose up -d
+
+This will start mongodb and redis services.
+
+1. spin up the registry-server container:
+
+    sudo docker-compose run registry-server bash
+
+1. and then, start the registry-server service:
+
+    node server.js
+
+1. to access the registry-server, we need to discover its IP running the following command:
+
+    sudo docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(sudo docker ps -aq)
+
+1. to access the registry-server through the browser, go to the following address:
+
+http://<ip registry-server>:5000
+
+
+
 ## Testing
 
 To run the tests, simply run:

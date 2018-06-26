@@ -23,7 +23,9 @@ services:
     ports:
       - '3000:3000'
       - '5000:5000'
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile-distributed
     environment:
       - 'REDISTOGO_URL=redis://redis-server:6379'
       - 'MONGOHQ_URL=mongodb://mongodb-server:27017/jsonresume'
