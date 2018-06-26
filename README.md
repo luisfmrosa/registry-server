@@ -41,29 +41,28 @@ It is assumed that registry-server are installed in separate folders, side-by-si
 #### Install procedure
 
 1. run the following commands:
-
+    ```
     cd ~/proj/registry-server
     sudo docker-compose up -d
+    ```
 
 This will start mongodb and redis services.
 
 1. spin up the registry-server container:
 
-    sudo docker-compose run registry-server bash
+    `sudo docker-compose run registry-server bash`
 
 1. and then, start the registry-server service:
 
-    node server.js
+    `node server.js`
 
 1. to access the registry-server, we need to discover its IP running the following command:
 
-    sudo docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(sudo docker ps -aq)
+    `sudo docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(sudo docker ps -aq)`
 
 1. to access the registry-server through the browser, go to the following address:
 
-http://<ip registry-server>:5000
-
-
+`http://<ip registry-server>:5000`
 
 ## Testing
 
