@@ -66,4 +66,4 @@ EXPOSE 3000 5000
 
 ENTRYPOINT /bin/bash
 
-#CMD ['node','server.js']
+CMD ['node','server.js']

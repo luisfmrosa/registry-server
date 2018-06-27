@@ -12,16 +12,24 @@ services:
     hostname: redis-server
     ports:
       - '6379:6379'
+  theme-manager:
+    container_name: theme-manager
+    ports:
+      - '3000:3000'
+    build:
+      context: ../theme-manager/.
+      dockerfile: Dockerfile
   registry-server:
     container_name: registry-server-dist
     depends_on:
       - mongodb-server
       - redis-server
+      - theme-manager
     links:
       - mongodb-server
       - redis-server
+      - theme-manager
     ports:
-      - '3000:3000'
       - '5000:5000'
     build:
       context: .
@@ -30,3 +38,4 @@ services:
       - 'REDISTOGO_URL=redis://redis-server:6379'
       - 'MONGOHQ_URL=mongodb://mongodb-server:27017/jsonresume'
       - POSTMARK_API_KEY=1234567889
+
